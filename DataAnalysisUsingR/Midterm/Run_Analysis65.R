@@ -59,40 +59,40 @@ if (length(grep("UCI HAR Dataset$",getwd())) == 0) {
                 rm(list = c("grep_mean","grep_std"))
                 
                 #Selecting desired columns
-                HAR <- HAR[,c(1,2,feature_cols)]
+                HAR2 <- HAR[,c(1,2,feature_cols)]
                 
                 #Writing column names
                 feature_cols <- feature_cols - 2
                 feature_cols <- features[feature_cols]
-                colnames(HAR) <- c("Observer_ID", "Activity_Name", feature_cols)
+                colnames(HAR2) <- c("Subject_ID", "Activity_Name", feature_cols)
                 
                 #Cleaning Environment
                 rm(list = c("feature_cols","features"))
                 
                 #Replacing Activity Labels
-                HAR[,2] <- as.character(HAR[,2])
+                HAR2[,2] <- as.character(HAR2[,2])
                 for(i in 1:6){
                         k <- as.character(i)
                         l <- act_labels[i,2]
-                        HAR[,2] <- gsub(k,l,HAR[,2])
+                        HAR2[,2] <- gsub(k,l,HAR2[,2])
                         }
                 
                 #Appropriating proper classes to columns
-                HAR[,1] <- as.factor(HAR[,1])
-                HAR[,2] <- as.factor(HAR[,2])
+                HAR2[,1] <- as.factor(HAR[,1])
+                HAR2[,2] <- as.factor(HAR[,2])
                 
                 #Cleaning Environment
                 rm(list = c("i","k","l", "act_labels"))
                 
                 #Creating tidy data
-                HAR_split <- split(HAR, list(HAR$Activity_Name,HAR$Observer_ID))
+                HAR_split <- split(HAR2, list(HAR2$Activity_Name,HAR2$Subject_ID))
                 HAR_means <- lapply(HAR_split, function(df){colMeans(df[,3:68])})
                 HAR_colMeans <- do.call(rbind, HAR_means)
                 names_split <- strsplit(rownames(HAR_colMeans), split = ".", fixed = T)
                 names_split <- do.call(rbind, names_split)
                 Averages <- data.frame(names_split,HAR_colMeans)
                 rownames(Averages) <- NULL
-                colnames(Averages) <- c("Activity_Name","Observer_ID",(colnames(Averages)[3:68]))
+                colnames(Averages) <- c("Activity_Name","Subject_ID",(colnames(Averages)[3:68]))
                 
                 #Cleaning environment
                 rm(list = c("names_split","HAR_split","HAR_means","HAR_colMeans"))
